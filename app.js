@@ -3,6 +3,14 @@ const app = express();
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+require('dotenv').config();
+const postBlog = require('./api/routes/blog')
+const User = require('./api/routes/user')
+
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log("logged to database"))
+    .catch(err => console.error('could not connect to mongo db....', err))
+
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -18,9 +26,17 @@ app.use((req, res, next) => {
 app.use(bodyParser.urlencoded({
     extended: false
 }));
+
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 
+app.use('/blog', postBlog);
+app.use('/user', User);
+
+
+app.get('/',(req,res,next)=>{
+    res.status(200).json({server:'server is life'});
+});
 app.use((req, res, next) => {
     const error = new Error('Not Found');
     error.status = 404;
@@ -33,5 +49,6 @@ app.use((error, req, res, next) => {
         success: false
     });
 });
+
 
 module.exports = app;
