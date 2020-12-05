@@ -14,7 +14,7 @@ const checkAuth = require('../../middleware/user_Auth');
 
 router.post('/', checkAuth, upload.single('mediafile'), postBlogController);
 
- router.get('/', getAllBlogController)
+ router.get('/blog', getAllBlogController)
 
  router.get('/:blogId', getBlogByIdController);
 
